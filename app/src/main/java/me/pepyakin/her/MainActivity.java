@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     private final MyAdapter adapter = new MyAdapter();
 
     private Subscription locationSubscription;
+    private Subscription chatSubscription;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         chat = Chat.getInstance();
-        chat.getChat().subscribe(new Action1<List<Chat.ChatItem>>() {
+        chatSubscription = chat.getChat().subscribe(new Action1<List<Chat.ChatItem>>() {
             @Override
             public void call(List<Chat.ChatItem> chat) {
                 adapter.setItems(chat);
@@ -103,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
         // TODO: We need to unsubscribe in onStop, for being good citizen and
         // not use location services in background.
         locationSubscription.unsubscribe();
+
+        chatSubscription.unsubscribe();
     }
 
     static final class NotificationSwallower extends BroadcastReceiver {
