@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     private Subscription locationSubscription;
     private Subscription chatSubscription;
 
+    private boolean locationSent = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,17 +61,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         if (savedInstanceState == null) {
-            locationSubscription = RxLocationManagerAdapter.singleMostAccurateLocation(this)
-                    .subscribe(new Action1<Location>() {
-                        @Override
-                        public void call(Location location) {
-                            // TODO: Get real coordinates
-                            String coordinates = location.toString();
-                            chat.send(coordinates);
-                        }
-                    });
-
             startService(new Intent(this, BotService.class));
+        } else {
+            locationSent = savedInstanceState.getBoolean("locationSent");
         }
 
         chat = Chat.getInstance();
@@ -80,27 +74,45 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-    
+
     @Override
     protected void onStart() {
         super.onStart();
         registerReceiver(notificationSwallower,
                 new IntentFilter(InboundMessageReceiver.NOTIFICATION_ABOUT_TO_SHOW));
+
+        if (!locationSent) {
+            locationSubscription = RxLocationManagerAdapter.singleMostAccurateLocation(this)
+                    .subscribe(new Action1<Location>() {
+                        @Override
+                        public void call(Location location) {
+                            // TODO: Get real coordinates
+                            String coordinates = location.toString();
+                            chat.send(coordinates);
+
+                            locationSent = true;
+                        }
+                    });
+        }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         unregisterReceiver(notificationSwallower);
+
+        locationSubscription.unsubscribe();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("locationSent", locationSent);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
-        // TODO: We need to unsubscribe in onStop, for being good citizen and
-        // not use location services in background.
-        locationSubscription.unsubscribe();
 
         chatSubscription.unsubscribe();
     }
