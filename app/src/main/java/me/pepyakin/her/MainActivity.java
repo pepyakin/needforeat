@@ -1,5 +1,6 @@
 package me.pepyakin.her;
 
+import android.content.Intent;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import me.pepyakin.her.bot.BotService;
 import rx.Subscription;
 import rx.functions.Action1;
 
@@ -63,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
                 addChatItem(chatItem);
             }
         });
+
+        startService(new Intent(this, BotService.class));
     }
 
     private void addChatItem(Chat.ChatItem chatItem) {
