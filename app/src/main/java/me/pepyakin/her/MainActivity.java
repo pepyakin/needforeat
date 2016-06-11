@@ -1,5 +1,6 @@
 package me.pepyakin.her;
 
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
@@ -23,6 +24,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean locationSent = false;
 
     private ChatView chatView;
+
+    public static Intent buildIntent(Context context) {
+        return new Intent(context, MainActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
