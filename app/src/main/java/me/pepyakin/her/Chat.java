@@ -13,7 +13,7 @@ import rx.subjects.Subject;
 
 public final class Chat {
 
-    private static Chat chatInstance = new Chat();
+    private static final Chat chatInstance = new Chat();
     private Subject<List<ChatItem>, List<ChatItem>> chatSubject = PublishSubject.create();
     private ArrayList<ChatItem> chatStorage = new ArrayList<>();
 
