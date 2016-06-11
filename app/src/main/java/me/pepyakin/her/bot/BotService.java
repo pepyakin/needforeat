@@ -19,8 +19,6 @@ import rx.functions.Func1;
 
 public final class BotService extends Service {
 
-    private static final Random random = new Random();
-
     private Subscription subscription;
 
     @Nullable
@@ -32,25 +30,13 @@ public final class BotService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        subscription = Observable.just(null)
-                .repeatWhen(new Func1<Observable<? extends Void>, Observable<?>>() {
-                    @Override
-                    public Observable<?> call(Observable<? extends Void> observable) {
-                        return observable.flatMap(new Func1<Void, Observable<?>>() {
-                            @Override
-                            public Observable<?> call(Void signal) {
-                                // [2000, 3000)
-                                long timerDelayMs = 2000 + random.nextInt(1000);
-                                return Observable.timer(timerDelayMs, TimeUnit.MILLISECONDS);
-                            }
-                        });
-                    }
-                })
+        BotAi botAi = new BotAi();
+        subscription = botAi.botWantToSay()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<Object>() {
+                .subscribe(new Action1<String>() {
                     @Override
-                    public void call(Object o) {
-                        sendMessage("Feed me!");
+                    public void call(String message) {
+                        sendMessage(message);
                     }
                 });
 
