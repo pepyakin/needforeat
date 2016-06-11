@@ -1,6 +1,10 @@
 package me.pepyakin.her;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +23,7 @@ import rx.functions.Action1;
 public class MainActivity extends AppCompatActivity {
 
     private Chat chat;
+    private final NotificationSwallower notificationSwallower = new NotificationSwallower();
 
     private LinearLayout chatView;
 
@@ -87,11 +92,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        registerReceiver(notificationSwallower,
+                new IntentFilter(InboundMessageReceiver.NOTIFICATION_ABOUT_TO_SHOW));
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(notificationSwallower);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        // TODO: We need to unsubscribe in onStop, for being good citizen and
+        // not use location services in background.
         locationSubscription.unsubscribe();
+    }
+
+    static final class NotificationSwallower extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            setResultCode(Activity.RESULT_CANCELED);
+        }
     }
 }
