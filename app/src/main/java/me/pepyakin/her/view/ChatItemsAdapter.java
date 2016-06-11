@@ -15,9 +15,14 @@ final class ChatItemsAdapter
 
     private List<ChatItem> items = Collections.emptyList();
 
-    public void setItems(List<ChatItem> items) {
-        this.items = items;
+    public void setItems(List<ChatItem> newItems) {
+        this.items = newItems;
         notifyDataSetChanged();
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return items.get(position).timestamp;
     }
 
     @Override
@@ -36,7 +41,8 @@ final class ChatItemsAdapter
         } else {
             desiredGravity = Gravity.END;
         }
-        holder.messageTextView.setText(chatItem.text);
+        holder.messageTextView.setText(chatItem.timestamp + " " +
+                chatItem.text);
         holder.messageTextView.setGravity(desiredGravity);
     }
 

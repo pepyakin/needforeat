@@ -9,16 +9,19 @@ public final class ChatItem {
     @NonNull
     public final String text;
 
-    ChatItem(boolean inbound, @NonNull String text) {
+    public final long timestamp;
+
+    ChatItem(boolean inbound, @NonNull String text, long timestamp) {
         this.inbound = inbound;
         this.text = text;
+        this.timestamp = timestamp;
     }
 
     public static ChatItem newInbound(@NonNull String text) {
-        return new ChatItem(true, text);
+        return new ChatItem(true, text, System.currentTimeMillis());
     }
 
     public static ChatItem newOutbound(@NonNull String text) {
-        return new ChatItem(false, text);
+        return new ChatItem(false, text, System.currentTimeMillis());
     }
 }

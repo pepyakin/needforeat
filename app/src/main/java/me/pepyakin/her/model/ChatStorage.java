@@ -32,7 +32,8 @@ final class ChatStorage  {
                         "CREATE TABLE chat (" +
                                 "id INTEGER PRIMARY KEY, " +
                                 "inbound INTEGER," +
-                                "msg_text TEXT" +
+                                "msg_text TEXT," +
+                                "timestamp INTEGER" +
                                 ")");
 
                 db.setTransactionSuccessful();
@@ -67,23 +68,27 @@ final class ChatStorage  {
         ContentValues contentValues = new ContentValues();
         contentValues.put("msg_text", chatItem.text);
         contentValues.put("inbound", chatItem.inbound ? 1 : 0);
+        contentValues.put("timestamp", chatItem.timestamp);
 
         db.insert("chat", contentValues);
     }
 
     public Observable<List<ChatItem>> queryChat() {
         QueryObservable chatQuery = db.createQuery(
-                "chat", "SELECT * FROM chat LIMIT 100");
+                "chat", "SELECT * FROM (SELECT * FROM chat ORDER BY " +
+                        "timestamp DESC LIMIT 100) ORDER BY timestamp ASC");
         return chatQuery.mapToList(new Func1<Cursor, ChatItem>() {
             @Override
             public ChatItem call(Cursor cursor) {
                 int msgTextIdx = cursor.getColumnIndexOrThrow("msg_text");
                 int inboundIdx = cursor.getColumnIndexOrThrow("inbound");
+                int timestampIdx = cursor.getColumnIndexOrThrow("timestamp");
 
                 String msgText = cursor.getString(msgTextIdx);
                 boolean inbound = cursor.getInt(inboundIdx) != 0;
+                long timestamp = cursor.getLong(timestampIdx);
 
-                return new ChatItem(inbound, msgText);
+                return new ChatItem(inbound, msgText, timestamp);
             }
         });
     }
