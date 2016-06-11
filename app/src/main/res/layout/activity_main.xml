@@ -12,15 +12,19 @@
     tools:context="me.pepyakin.her.MainActivity"
     >
 
-    <TextView
+    <LinearLayout
         android:id="@+id/main_chat"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:orientation="vertical"
         android:text="Hello World!"/>
 
     <EditText
         android:id="@+id/main_message"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:imeOptions="actionSend"
+        />
 </LinearLayout>
