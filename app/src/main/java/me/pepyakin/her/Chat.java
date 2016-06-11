@@ -14,9 +14,33 @@ import rx.subjects.Subject;
 public final class Chat {
 
     private static Chat chatInstance = new Chat();
+    private Subject<List<ChatItem>, List<ChatItem>> chatSubject = PublishSubject.create();
+    private ArrayList<ChatItem> chatStorage = new ArrayList<>();
 
     public static Chat getInstance() {
         return chatInstance;
+    }
+
+    public void send(@NonNull String message) {
+        addChatItem(ChatItem.newOutbound(message));
+    }
+
+    private void addChatItem(ChatItem chatItem) {
+        chatStorage.add(chatItem);
+        chatSubject.onNext(chatStorage);
+    }
+
+    public void receive(@NonNull String message) {
+        addChatItem(ChatItem.newInbound(message));
+    }
+
+    public Observable<List<ChatItem>> getChat() {
+        return chatSubject.asObservable().map(new Func1<List<ChatItem>, List<ChatItem>>() {
+            @Override
+            public List<ChatItem> call(List<ChatItem> chat) {
+                return Collections.unmodifiableList(chat);
+            }
+        });
     }
 
     final static class ChatItem {
@@ -38,30 +62,5 @@ public final class Chat {
         public static ChatItem newOutbound(@NonNull String text) {
             return new ChatItem(false, text);
         }
-    }
-
-    private Subject<List<ChatItem>, List<ChatItem>> chatSubject = PublishSubject.create();
-    private ArrayList<ChatItem> chatStorage = new ArrayList<>();
-
-    public void send(@NonNull String message) {
-        addChatItem(ChatItem.newOutbound(message));
-    }
-
-    public void receive(@NonNull String message) {
-        addChatItem(ChatItem.newInbound(message));
-    }
-
-    private void addChatItem(ChatItem chatItem) {
-        chatStorage.add(chatItem);
-        chatSubject.onNext(chatStorage);
-    }
-
-    public Observable<List<ChatItem>> getChat() {
-        return chatSubject.asObservable().map(new Func1<List<ChatItem>, List<ChatItem>>() {
-            @Override
-            public List<ChatItem> call(List<ChatItem> chat) {
-                return Collections.unmodifiableList(chat);
-            }
-        });
     }
 }

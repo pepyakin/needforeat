@@ -9,16 +9,10 @@ import rx.functions.Func1;
 final class BotAi {
 
     private static final Random random = new Random();
-    private static final String[] vocabulary = new String[] {
+    private static final String[] vocabulary = new String[]{
             "Feed Me!", "Please, feed me!", "I want to eat!", "eat!",
             "feed me please!", "meal time!"
     };
-
-    private String chooseWhatToSay() {
-        // Use well-known "headless hen" algorithm to choose what to say.
-        int index = random.nextInt(vocabulary.length);
-        return vocabulary[index];
-    }
 
     Observable<String> botWantToSay() {
         return Observable.just(null)
@@ -41,5 +35,11 @@ final class BotAi {
                         return chooseWhatToSay();
                     }
                 });
+    }
+
+    private String chooseWhatToSay() {
+        // Use well-known "headless hen" algorithm to choose what to say.
+        int index = random.nextInt(vocabulary.length);
+        return vocabulary[index];
     }
 }

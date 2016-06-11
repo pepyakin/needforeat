@@ -6,17 +6,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -28,10 +26,9 @@ import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Chat chat;
     private final NotificationSwallower notificationSwallower = new NotificationSwallower();
     private final MyAdapter adapter = new MyAdapter();
-
+    private Chat chat;
     private Subscription locationSubscription;
     private Subscription chatSubscription;
 
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    
     @Override
     protected void onStart() {
         super.onStart();
@@ -117,15 +114,6 @@ public class MainActivity extends AppCompatActivity {
 
     private static class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-        final static class ViewHolder extends RecyclerView.ViewHolder {
-            final TextView messageTextView;
-
-            public ViewHolder(TextView messageTextView) {
-                super(messageTextView);
-                this.messageTextView = messageTextView;
-            }
-        }
-
         private List<Chat.ChatItem> items = Collections.emptyList();
 
         public void setItems(List<Chat.ChatItem> items) {
@@ -156,6 +144,15 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return items.size();
+        }
+
+        final static class ViewHolder extends RecyclerView.ViewHolder {
+            final TextView messageTextView;
+
+            public ViewHolder(TextView messageTextView) {
+                super(messageTextView);
+                this.messageTextView = messageTextView;
+            }
         }
     }
 }

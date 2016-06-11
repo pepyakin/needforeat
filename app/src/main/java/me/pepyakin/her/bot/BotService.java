@@ -5,28 +5,15 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 import me.pepyakin.her.InboundMessageReceiver;
-import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
-import rx.functions.Func1;
 
 public final class BotService extends Service {
 
     private Subscription subscription;
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        // Service is not bindable
-        return null;
-    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -55,5 +42,12 @@ public final class BotService extends Service {
         // Actually, this service is not meant to be destroyed, so this is just in case.
         super.onDestroy();
         subscription.unsubscribe();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        // Service is not bindable
+        return null;
     }
 }
