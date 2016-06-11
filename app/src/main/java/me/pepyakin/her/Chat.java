@@ -2,7 +2,12 @@ package me.pepyakin.her;
 
 import android.support.annotation.NonNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import rx.Observable;
+import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
@@ -35,17 +40,28 @@ public final class Chat {
         }
     }
 
-    private Subject<ChatItem, ChatItem> chatSubject = PublishSubject.create();
+    private Subject<List<ChatItem>, List<ChatItem>> chatSubject = PublishSubject.create();
+    private ArrayList<ChatItem> chatStorage = new ArrayList<>();
 
     public void send(@NonNull String message) {
-        chatSubject.onNext(ChatItem.newOutbound(message));
+        addChatItem(ChatItem.newOutbound(message));
     }
 
     public void receive(@NonNull String message) {
-        chatSubject.onNext(ChatItem.newInbound(message));
+        addChatItem(ChatItem.newInbound(message));
     }
 
-    public Observable<ChatItem> getChat() {
-        return chatSubject.asObservable();
+    private void addChatItem(ChatItem chatItem) {
+        chatStorage.add(chatItem);
+        chatSubject.onNext(chatStorage);
+    }
+
+    public Observable<List<ChatItem>> getChat() {
+        return chatSubject.asObservable().map(new Func1<List<ChatItem>, List<ChatItem>>() {
+            @Override
+            public List<ChatItem> call(List<ChatItem> chat) {
+                return Collections.unmodifiableList(chat);
+            }
+        });
     }
 }
