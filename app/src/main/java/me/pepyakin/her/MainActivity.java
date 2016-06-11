@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        locationSubscription = RxLocationManagerAdapter.deviceLocation(this)
+        locationSubscription = RxLocationManagerAdapter.singleMostAccurateLocation(this)
                 .subscribe(new Action1<Location>() {
                     @Override
                     public void call(Location location) {
