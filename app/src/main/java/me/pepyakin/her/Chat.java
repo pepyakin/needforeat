@@ -43,12 +43,12 @@ public final class Chat {
         });
     }
 
-    final static class ChatItem {
+    public final static class ChatItem {
         // true if inbound, otherwise outbound.
-        final boolean inbound;
+        public final boolean inbound;
 
         @NonNull
-        final String text;
+        public final String text;
 
         private ChatItem(boolean inbound, @NonNull String text) {
             this.inbound = inbound;
