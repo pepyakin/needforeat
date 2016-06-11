@@ -42,8 +42,11 @@ public class MainActivity extends AppCompatActivity {
         EditText messageView = (EditText) findViewById(R.id.main_message);
         RecyclerView chatView = (RecyclerView) findViewById(R.id.main_chat);
 
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
+
         //noinspection ConstantConditions
-        chatView.setLayoutManager(new LinearLayoutManager(this));
+        chatView.setLayoutManager(layoutManager);
         chatView.setAdapter(adapter);
 
         //noinspection ConstantConditions
