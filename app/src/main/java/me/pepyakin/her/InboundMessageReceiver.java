@@ -1,11 +1,11 @@
 package me.pepyakin.her;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.widget.Toast;
+
+import me.pepyakin.her.model.Chat;
 
 public final class InboundMessageReceiver extends BroadcastReceiver {
 
@@ -19,7 +19,7 @@ public final class InboundMessageReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String message = intent.getStringExtra("message");
         if (message != null) {
-            Chat.getInstance().receive(message);
+            Chat.getInstance(context).receive(message);
             NotificationController.displayNotificationIfNeeded(context, message);
         }
     }

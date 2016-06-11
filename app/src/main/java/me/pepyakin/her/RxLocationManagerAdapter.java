@@ -17,8 +17,10 @@ public final class RxLocationManagerAdapter {
     }
 
     @NonNull
-    public static Observable<Location> singleMostAccurateLocation(@NonNull final Context context) {
-        LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+    public static Observable<Location> singleMostAccurateLocation(
+            @NonNull final Context context) {
+        LocationManager locationManager =
+                (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         return Observable.create(new LocationOnSubscribe(locationManager));
     }
 
@@ -60,5 +62,3 @@ public final class RxLocationManagerAdapter {
         }
     }
 }
-
-

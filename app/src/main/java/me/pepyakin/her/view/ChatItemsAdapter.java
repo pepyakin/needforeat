@@ -8,14 +8,14 @@ import android.widget.TextView;
 import java.util.Collections;
 import java.util.List;
 
-import me.pepyakin.her.Chat;
+import me.pepyakin.her.model.ChatItem;
 
 final class ChatItemsAdapter
         extends RecyclerView.Adapter<ChatItemsAdapter.ViewHolder> {
 
-    private List<Chat.ChatItem> items = Collections.emptyList();
+    private List<ChatItem> items = Collections.emptyList();
 
-    public void setItems(List<Chat.ChatItem> items) {
+    public void setItems(List<ChatItem> items) {
         this.items = items;
         notifyDataSetChanged();
     }
@@ -28,7 +28,7 @@ final class ChatItemsAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Chat.ChatItem chatItem = items.get(position);
+        ChatItem chatItem = items.get(position);
 
         int desiredGravity;
         if (chatItem.inbound) {

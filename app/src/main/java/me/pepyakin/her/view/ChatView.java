@@ -13,8 +13,8 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import me.pepyakin.her.Chat;
 import me.pepyakin.her.R;
+import me.pepyakin.her.model.ChatItem;
 
 public final class ChatView extends FrameLayout {
 
@@ -60,7 +60,7 @@ public final class ChatView extends FrameLayout {
         }
     }
 
-    public void setItems(List<Chat.ChatItem> chat) {
+    public void setItems(List<ChatItem> chat) {
         chatItemsAdapter.setItems(chat);
     }
 

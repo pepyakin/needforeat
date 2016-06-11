@@ -8,13 +8,15 @@ import android.support.v7.app.AppCompatActivity;
 import java.util.List;
 
 import me.pepyakin.her.bot.BotService;
+import me.pepyakin.her.model.Chat;
+import me.pepyakin.her.model.ChatItem;
 import me.pepyakin.her.view.ChatView;
 import rx.Subscription;
 import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Chat chat = Chat.getInstance();
+    private Chat chat;
     private Subscription locationSubscription;
     private Subscription chatSubscription;
 
@@ -25,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        chat = Chat.getInstance(this);
 
         chatView = new ChatView(this);
         setContentView(chatView);
@@ -41,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 chat.send(message);
             }
         });
-        chatSubscription = chat.getChat().subscribe(new Action1<List<Chat.ChatItem>>() {
+        chatSubscription = chat.getChat().subscribe(new Action1<List<ChatItem>>() {
             @Override
-            public void call(List<Chat.ChatItem> chat) {
+            public void call(List<ChatItem> chat) {
                 chatView.setItems(chat);
             }
         });
