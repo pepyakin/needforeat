@@ -3,12 +3,14 @@ package me.pepyakin.her.bot;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import me.pepyakin.her.InboundMessageReceiver;
 import rx.Observable;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -48,12 +50,18 @@ public final class BotService extends Service {
                 .subscribe(new Action1<Object>() {
                     @Override
                     public void call(Object o) {
-                        Log.e("BotService", "message!");
+                        sendMessage("Feed me!");
                     }
                 });
 
         // We don't really care about redelivering intent, so use STICKY.
         return START_STICKY;
+    }
+
+    private void sendMessage(@NonNull String message) {
+        Intent intent = InboundMessageReceiver.sendMessageIntent(this, message);
+        intent.setPackage(getPackageName());
+        sendBroadcast(intent);
     }
 
     @Override

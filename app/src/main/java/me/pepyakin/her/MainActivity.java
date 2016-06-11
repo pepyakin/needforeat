@@ -56,17 +56,17 @@ public class MainActivity extends AppCompatActivity {
                             chat.send(coordinates);
                         }
                     });
+
+            startService(new Intent(this, BotService.class));
         }
 
-        chat = new Chat();
+        chat = Chat.getInstance();
         chat.getChat().subscribe(new Action1<Chat.ChatItem>() {
             @Override
             public void call(Chat.ChatItem chatItem) {
                 addChatItem(chatItem);
             }
         });
-
-        startService(new Intent(this, BotService.class));
     }
 
     private void addChatItem(Chat.ChatItem chatItem) {
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         chatItemView.setText(chatItem.text);
 
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         if (chatItem.inbound) {
             lp.gravity = Gravity.START;
