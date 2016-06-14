@@ -1,39 +1,36 @@
 package me.pepyakin.her.bot;
 
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
+import android.support.annotation.NonNull;
 
 import rx.Observable;
 import rx.functions.Func1;
 
 final class BotAi {
 
-    private static final Random random = new Random();
-
     // TODO: i18n
-    private static final String[] vocabulary = new String[] {
+    private static final String[] vocabulary = new String[]{
             "Feed Me!", "Please, feed me!", "I want to eat!", "eat!",
             "feed me please!", "meal time!"
     };
+    private final ImpulseProvider impulseProvider;
+    private final Rng rng;
 
+    BotAi(ImpulseProvider impulseProvider, Rng rng) {
+        this.impulseProvider = impulseProvider;
+        this.rng = rng;
+    }
+
+    @NonNull
+    static BotAi create() {
+        return new BotAi(ImpulseProvider.create(), new RealRng());
+    }
+
+    @NonNull
     Observable<String> botWantToSay() {
-        return Observable.just(null)
-                .repeatWhen(new Func1<Observable<? extends Void>, Observable<?>>() {
+        return impulseProvider.impulse()
+                .map(new Func1<Void, String>() {
                     @Override
-                    public Observable<?> call(Observable<? extends Void> observable) {
-                        return observable.flatMap(new Func1<Void, Observable<?>>() {
-                            @Override
-                            public Observable<?> call(Void signal) {
-                                // [2000, 3000)
-                                long timerDelayMs = 2000 + random.nextInt(1000);
-                                return Observable.timer(timerDelayMs, TimeUnit.MILLISECONDS);
-                            }
-                        });
-                    }
-                })
-                .map(new Func1<Object, String>() {
-                    @Override
-                    public String call(Object o) {
+                    public String call(Void o) {
                         return chooseWhatToSay();
                     }
                 });
@@ -41,7 +38,7 @@ final class BotAi {
 
     private String chooseWhatToSay() {
         // Use well-known "headless hen" algorithm to choose what to say.
-        int index = random.nextInt(vocabulary.length);
+        int index = rng.nextInt(vocabulary.length);
         return vocabulary[index];
     }
 }

@@ -6,6 +6,8 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.Random;
+
 import me.pepyakin.her.InboundMessageReceiver;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
@@ -17,7 +19,7 @@ public final class BotService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        BotAi botAi = new BotAi();
+        BotAi botAi = BotAi.create();
         subscription = botAi.botWantToSay()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<String>() {
