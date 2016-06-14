@@ -40,17 +40,4 @@ public class ImpulseProviderTest {
         testScheduler.advanceTimeBy(2100, TimeUnit.MILLISECONDS);
         assertThat(testSubscriber, valueCount(equalTo(2)));
     }
-
-    private static class MockRng implements Rng {
-        private int nextRandom;
-
-        void setNextRandom(int nextRandom) {
-            this.nextRandom = nextRandom;
-        }
-
-        @Override
-        public int nextInt(int n) {
-            return nextRandom;
-        }
-    }
 }

@@ -7,22 +7,17 @@ import rx.functions.Func1;
 
 final class BotAi {
 
-    // TODO: i18n
-    private static final String[] vocabulary = new String[]{
-            "Feed Me!", "Please, feed me!", "I want to eat!", "eat!",
-            "feed me please!", "meal time!"
-    };
     private final ImpulseProvider impulseProvider;
-    private final Rng rng;
+    private final Speech speech;
 
-    BotAi(ImpulseProvider impulseProvider, Rng rng) {
+    BotAi(ImpulseProvider impulseProvider, Speech speech) {
         this.impulseProvider = impulseProvider;
-        this.rng = rng;
+        this.speech = speech;
     }
 
     @NonNull
     static BotAi create() {
-        return new BotAi(ImpulseProvider.create(), new RealRng());
+        return new BotAi(ImpulseProvider.create(), Speech.create());
     }
 
     @NonNull
@@ -31,14 +26,8 @@ final class BotAi {
                 .map(new Func1<Void, String>() {
                     @Override
                     public String call(Void o) {
-                        return chooseWhatToSay();
+                        return speech.pickNextWord();
                     }
                 });
-    }
-
-    private String chooseWhatToSay() {
-        // Use well-known "headless hen" algorithm to choose what to say.
-        int index = rng.nextInt(vocabulary.length);
-        return vocabulary[index];
     }
 }
