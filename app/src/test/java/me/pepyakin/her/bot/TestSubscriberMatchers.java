@@ -10,7 +10,7 @@ final class TestSubscriberMatchers {
     private TestSubscriberMatchers() {
     }
 
-    public static TypeSafeMatcher<TestSubscriber<?>> valueCount(final Matcher<Integer> matcher) {
+    public static TypeSafeMatcher<TestSubscriber<?>> emittedValueCount(final Matcher<Integer> matcher) {
         return new TypeSafeMatcher<TestSubscriber<?>>() {
             @Override
             protected boolean matchesSafely(TestSubscriber<?> item) {
