@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">her</string>
+    <string-array name="vocabulary">
+        <item>Feed Me!</item>
+        <item>Please, feed me!</item>
+        <item>I want to eat!</item>
+        <item>eat!</item>
+        <item>feed me please!</item>
+        <item>meal time!</item>
+    </string-array>
 </resources>

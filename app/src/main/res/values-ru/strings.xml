@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">her</string>
+    <string-array name="vocabulary">
+        <item>Покорми меня!</item>
+        <item>Пожажа, покорми!</item>
+        <item>Я хочу кушать!</item>
+        <item>Есть!</item>
+        <item>покорми пожажа!</item>
+        <item>время кушать!</item>
+    </string-array>
+</resources>

@@ -19,7 +19,7 @@ public final class BotService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        BotAi botAi = BotAi.create();
+        BotAi botAi = BotAi.create(this);
         subscription = botAi.botWantToSay()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<String>() {

@@ -1,5 +1,6 @@
 package me.pepyakin.her.bot;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import rx.Observable;
@@ -16,8 +17,9 @@ final class BotAi {
     }
 
     @NonNull
-    static BotAi create() {
-        return new BotAi(ImpulseProvider.create(), Speech.create());
+    static BotAi create(Context context) {
+        Speech speech = Speech.create(context.getResources());
+        return new BotAi(ImpulseProvider.create(), speech);
     }
 
     @NonNull
