@@ -1,9 +1,13 @@
 package me.pepyakin.her;
 
 import android.app.Activity;
+import android.support.test.espresso.ViewAssertion;
+import android.support.test.espresso.assertion.ViewAssertions;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import org.hamcrest.Matchers;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +33,12 @@ import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
 import static android.support.test.espresso.action.ViewActions.typeText;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
+import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.containsString;
 
 @RunWith(AndroidJUnit4.class)
 public class ChatViewTest {
@@ -57,7 +66,7 @@ public class ChatViewTest {
     }
 
     @Test
-    public void output() throws Exception {
+    public void displayChatItems() throws Exception {
         Activity activity = activityRule.getActivity();
         obtainChatView(activity)
                 .doOnNext(new Action1<ChatView>() {
@@ -72,6 +81,10 @@ public class ChatViewTest {
                 .toBlocking()
                 .last();
 
+        onView(withText(containsString("hello")))
+                .check(matches(isDisplayed()));
+        onView(withText(containsString("world")))
+                .check(matches(isDisplayed()));
     }
 
     private Observable<ChatView> obtainChatView(final Activity activity) {
