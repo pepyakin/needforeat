@@ -6,8 +6,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.Random;
-
 import me.pepyakin.her.InboundMessageReceiver;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
