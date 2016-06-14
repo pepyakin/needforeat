@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 
+import me.pepyakin.her.util.AbsLocationListener;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;

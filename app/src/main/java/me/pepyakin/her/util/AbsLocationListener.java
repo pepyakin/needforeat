@@ -1,4 +1,4 @@
-package me.pepyakin.her;
+package me.pepyakin.her.util;
 
 import android.location.Location;
 import android.location.LocationListener;

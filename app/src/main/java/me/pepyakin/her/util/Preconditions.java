@@ -1,9 +1,9 @@
-package me.pepyakin.her;
+package me.pepyakin.her.util;
 
 import android.os.Looper;
 
-public final class Util {
-    private Util() {
+public final class Preconditions {
+    private Preconditions() {
     }
 
     public static void assertMainThread() {

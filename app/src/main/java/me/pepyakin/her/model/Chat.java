@@ -8,7 +8,7 @@ import java.util.List;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 
-import static me.pepyakin.her.Util.assertMainThread;
+import static me.pepyakin.her.util.Preconditions.assertMainThread;
 
 public final class Chat {
 
