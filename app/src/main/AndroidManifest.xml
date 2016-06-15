@@ -20,7 +20,7 @@
 
         <receiver android:name=".InboundMessageReceiver" android:exported="false" />
 
-        <service android:name=".bot.BotService" />
+        <service android:name=".bot.BotService" android:process=":bot" />
     </application>
 
 </manifest>
