@@ -42,7 +42,6 @@ public class NotificationController {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (getResultCode() == Activity.RESULT_OK) {
-                    // Pretend to be notification
                     displayNotification(context, message);
                 }
             }
