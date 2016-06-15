@@ -24,5 +24,6 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         android:imeOptions="actionSend"
+        android:hint="@string/write_a_message"
         />
 </LinearLayout>
