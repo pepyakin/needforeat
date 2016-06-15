@@ -21,6 +21,8 @@ public final class Chat {
     }
 
     public static Chat getInstance(Context context) {
+        // Call from main thread only. To lift this requirement, one
+        // should make sure of real thread safety.
         assertMainThread();
 
         if (chatInstance == null) {

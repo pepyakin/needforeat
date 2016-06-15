@@ -8,8 +8,12 @@ public final class Preconditions {
 
     public static void assertMainThread() {
         if (Looper.getMainLooper() != Looper.myLooper()) {
-            // Call from main thread only. To lift this requirement, one
-            // should make sure of real thread safety.
+            throw new AssertionError();
+        }
+    }
+
+    public static void check(boolean condition) {
+        if (!condition) {
             throw new AssertionError();
         }
     }

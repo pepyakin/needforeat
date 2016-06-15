@@ -2,8 +2,8 @@ package me.pepyakin.her;
 
 import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 
 import java.util.List;
@@ -11,13 +11,21 @@ import java.util.List;
 import me.pepyakin.her.bot.BotService;
 import me.pepyakin.her.model.Chat;
 import me.pepyakin.her.model.ChatItem;
+import me.pepyakin.her.model.GeoPoint;
+import me.pepyakin.her.util.Preconditions;
 import me.pepyakin.her.view.ChatView;
+import rx.Observable;
 import rx.Subscription;
 import rx.functions.Action1;
+import rx.functions.Func1;
+
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
 
     private Chat chat;
+    private PermissionRequester permissionRequester;
+
     private Subscription locationSubscription;
     private Subscription chatSubscription;
 
@@ -34,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         chat = Chat.getInstance(this);
+        permissionRequester = new PermissionRequester(this);
 
         chatView = new ChatView(this);
         setContentView(chatView);
@@ -64,16 +73,35 @@ public class MainActivity extends AppCompatActivity {
         NotificationController.chatActivityStarted(this);
 
         if (!locationSent) {
-            locationSubscription = RxLocationManagerAdapter.singleMostAccurateLocation(this)
-                    .subscribe(new Action1<GeoPoint>() {
-                        @Override
-                        public void call(GeoPoint geoPoint) {
-                            String coordinates = geoPoint.toString();
-                            chat.send(coordinates);
-                            locationSent = true;
-                        }
-                    });
+            requestAndEventuallySendLocation();
         }
+    }
+
+    private void requestAndEventuallySendLocation() {
+        final Observable<GeoPoint> deviceLocationObservable
+                = RxLocationManagerAdapter.singleMostAccurateLocation(this);
+
+        String[] permissions = {ACCESS_FINE_LOCATION};
+        locationSubscription = permissionRequester.ensurePermissions(permissions)
+                .flatMap(new Func1<Boolean, Observable<GeoPoint>>() {
+                    @Override
+                    public Observable<GeoPoint> call(Boolean permissionsGranted) {
+                        if (permissionsGranted) {
+                            return deviceLocationObservable;
+                        } else {
+                            // TODO: Heuristics?
+                            return Observable.never();
+                        }
+                    }
+                })
+                .subscribe(new Action1<GeoPoint>() {
+                    @Override
+                    public void call(GeoPoint geoPoint) {
+                        String coordinates = geoPoint.toString();
+                        chat.send(coordinates);
+                        locationSent = true;
+                    }
+                });
     }
 
     @Override
@@ -81,7 +109,9 @@ public class MainActivity extends AppCompatActivity {
         super.onStop();
         NotificationController.chatActivityStopped(this);
 
-        locationSubscription.unsubscribe();
+        if (locationSubscription != null) {
+            locationSubscription.unsubscribe();
+        }
     }
 
     @Override
@@ -95,5 +125,21 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
         chatSubscription.unsubscribe();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults
+    ) {
+        Preconditions.check(permissions.length == grantResults.length);
+        if (permissions.length == 0) {
+            // Cancelled.
+            return;
+        }
+
+        permissionRequester.onRequestPermissionResult(
+                permissions, grantResults);
     }
 }

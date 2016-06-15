@@ -11,6 +11,7 @@ import me.pepyakin.her.util.AbsLocationListener;
 import rx.Observable;
 import rx.Subscriber;
 import rx.functions.Action0;
+import rx.functions.Func1;
 import rx.subscriptions.BooleanSubscription;
 
 public final class RxLocationManagerAdapter {
@@ -65,7 +66,7 @@ public final class RxLocationManagerAdapter {
             try {
                 locationManager.requestSingleUpdate(criteria, listener, null);
             } catch (SecurityException e) {
-                // TODO: rethrow as onError
+                subscriber.onError(e);
             }
         }
     }
