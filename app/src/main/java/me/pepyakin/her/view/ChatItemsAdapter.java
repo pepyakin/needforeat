@@ -44,6 +44,11 @@ final class ChatItemsAdapter
         holder.messageTextView.setText(chatItem.timestamp + " " +
                 chatItem.text);
         holder.messageTextView.setGravity(desiredGravity);
+        RecyclerView.LayoutParams lp =
+                new RecyclerView.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT);
+        holder.messageTextView.setLayoutParams(lp);
     }
 
     @Override
