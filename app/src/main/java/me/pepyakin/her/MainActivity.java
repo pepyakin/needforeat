@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.util.List;
 
@@ -100,6 +101,11 @@ public class MainActivity extends AppCompatActivity {
                         String coordinates = geoPoint.toString();
                         chat.send(coordinates);
                         locationSent = true;
+                    }
+                }, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        Log.w("MainActivity", throwable);
                     }
                 });
     }
