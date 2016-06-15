@@ -2,8 +2,8 @@ package me.pepyakin.her;
 
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -28,50 +28,44 @@ final class RxLocationManagerAdapter {
         return singleMostAccurateLocation(locationProvider);
     }
 
+    @VisibleForTesting
     @NonNull
-    private static Observable<GeoPoint> singleMostAccurateLocation(
+    static Observable<GeoPoint> singleMostAccurateLocation(
             LocationProvider locationProvider) {
-        Observable<Location> onlineLocation =
+        Observable<GeoPoint> onlineLocation =
                 Observable.create(new LocationOnSubscribe(locationProvider))
                         .publish()
                         .refCount();
 
-        Observable<Location> prependLastKnownLocation =
+        Observable<GeoPoint> prependLastKnownLocation =
                 lastKnownLocation(locationProvider).concatWith(onlineLocation);
 
-        Observable<Location> lastKnownLocationDeadline =
-                onlineLocation.timeout(new Func0<Observable<Object>>() {
-                    @Override
-                    public Observable<Object> call() {
-                        return Observable.timer(1, TimeUnit.SECONDS).cast(Object.class);
-                    }
-                }, new Func1<Location, Observable<Object>>() {
-                    @Override
-                    public Observable<Object> call(Location location) {
-                        return Observable.never();
-                    }
-                }, prependLastKnownLocation);
-
-        return lastKnownLocationDeadline.map(new Func1<Location, GeoPoint>() {
+        return onlineLocation.timeout(new Func0<Observable<Object>>() {
             @Override
-            public GeoPoint call(Location location) {
-                return GeoPoint.fromLocation(location);
+            public Observable<Object> call() {
+                return Observable.timer(1, TimeUnit.SECONDS).cast(Object.class);
             }
-        });
+        }, new Func1<GeoPoint, Observable<Object>>() {
+            @Override
+            public Observable<Object> call(GeoPoint location) {
+                return Observable.never();
+            }
+        }, prependLastKnownLocation);
     }
 
     @NonNull
-    private static Observable<Location> lastKnownLocation(
+    private static Observable<GeoPoint> lastKnownLocation(
             final LocationProvider locationProvider) {
-        return Observable.fromCallable(new Callable<Location>() {
+        return Observable.fromCallable(new Callable<GeoPoint>() {
             @Override
-            public Location call() throws SecurityException {
+            public GeoPoint call() throws SecurityException {
                 return locationProvider.getLastKnownLocation();
             }
         });
     }
 
-    private static class LocationOnSubscribe implements Observable.OnSubscribe<Location> {
+    private static class LocationOnSubscribe
+            implements Observable.OnSubscribe<GeoPoint> {
         @NonNull
         final LocationProvider locationProvider;
 
@@ -80,11 +74,11 @@ final class RxLocationManagerAdapter {
         }
 
         @Override
-        public void call(final Subscriber<? super Location> subscriber) {
+        public void call(final Subscriber<? super GeoPoint> subscriber) {
             LocationProvider.LocationReceived listener =
                     new LocationProvider.LocationReceived() {
                         @Override
-                        public void onLocationReceived(@NonNull Location location) {
+                        public void onLocationReceived(@NonNull GeoPoint location) {
                             subscriber.onNext(location);
                         }
                     };

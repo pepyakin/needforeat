@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import me.pepyakin.her.model.GeoPoint;
 import me.pepyakin.her.util.AbsLocationListener;
 
 final class AospLocationProvider implements LocationProvider {
@@ -23,13 +24,15 @@ final class AospLocationProvider implements LocationProvider {
         return new AospLocationProvider(locationManager);
     }
 
+    @NonNull
     @Override
     public LocationListener requestSingleLocation(
             @NonNull final LocationReceived locationReceived) {
         final AbsLocationListener listener = new AbsLocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                locationReceived.onLocationReceived(location);
+                locationReceived.onLocationReceived(
+                        GeoPoint.fromLocation(location));
             }
         };
 
@@ -51,14 +54,16 @@ final class AospLocationProvider implements LocationProvider {
 
     @Nullable
     @Override
-    public Location getLastKnownLocation() {
+    public GeoPoint getLastKnownLocation() {
         String bestProvider = locationManager.getBestProvider(
                 getCriteria(),
-                        /* enabledOnly */ true);
+                /* enabledOnly */ true);
 
         // Thrown exception will be bubbled up to onError.
         //noinspection MissingPermission
-        return locationManager.getLastKnownLocation(bestProvider);
+        Location lastKnownLocation = locationManager.getLastKnownLocation
+                (bestProvider);
+        return GeoPoint.fromLocation(lastKnownLocation);
     }
 
     private static Criteria getCriteria() {
