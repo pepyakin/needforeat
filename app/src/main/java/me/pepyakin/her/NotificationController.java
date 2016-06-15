@@ -89,13 +89,12 @@ public class NotificationController {
             PendingIntent mainActivityPi = PendingIntent.getActivity(context, 1, intent, 0);
 
             // TODO: Consider to use inbox style
-            // TODO: i18n
             NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
                     .setOnlyAlertOnce(true)
                     .setDefaults(NotificationCompat.DEFAULT_ALL)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentIntent(mainActivityPi)
-                    .setContentTitle(totalCount + " new messages!")
+                    .setContentTitle(context.getString(R.string.n_new_messages, totalCount))
                     .setTicker(message)
                     .setContentText(message);
 

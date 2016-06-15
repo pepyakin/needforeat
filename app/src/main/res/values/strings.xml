@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">her</string>
     <string name="write_a_message">Write a Message</string>
+    <string name="n_new_messages">%d new messages!</string>
     <string-array name="vocabulary">
         <item>Feed Me!</item>
         <item>Please, feed me!</item>

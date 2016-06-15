@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">her</string>
     <string name="write_a_message">Написать сообщение</string>
+    <string name="n_new_messages">%d новых сообщений!</string>
     <string-array name="vocabulary">
         <item>Покорми меня!</item>
         <item>Пожажа, покорми!</item>
