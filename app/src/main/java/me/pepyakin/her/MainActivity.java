@@ -65,13 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (!locationSent) {
             locationSubscription = RxLocationManagerAdapter.singleMostAccurateLocation(this)
-                    .subscribe(new Action1<Location>() {
+                    .subscribe(new Action1<GeoPoint>() {
                         @Override
-                        public void call(Location location) {
-                            // TODO: Get real coordinates
-                            String coordinates = location.toString();
+                        public void call(GeoPoint geoPoint) {
+                            String coordinates = geoPoint.toString();
                             chat.send(coordinates);
-
                             locationSent = true;
                         }
                     });

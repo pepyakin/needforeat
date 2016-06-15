@@ -6,6 +6,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
 
+import me.pepyakin.her.model.GeoPoint;
 import me.pepyakin.her.util.AbsLocationListener;
 import rx.Observable;
 import rx.Subscriber;
@@ -18,11 +19,17 @@ public final class RxLocationManagerAdapter {
     }
 
     @NonNull
-    public static Observable<Location> singleMostAccurateLocation(
+    public static Observable<GeoPoint> singleMostAccurateLocation(
             @NonNull final Context context) {
         LocationManager locationManager =
                 (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        return Observable.create(new LocationOnSubscribe(locationManager));
+        return Observable.create(new LocationOnSubscribe(locationManager))
+                .map(new Func1<Location, GeoPoint>() {
+                    @Override
+                    public GeoPoint call(Location location) {
+                        return GeoPoint.fromLocation(location);
+                    }
+                });
     }
 
     private static class LocationOnSubscribe implements Observable.OnSubscribe<Location> {
