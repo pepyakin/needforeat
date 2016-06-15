@@ -17,15 +17,17 @@ public final class BotService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        BotAi botAi = BotAi.create(this);
-        subscription = botAi.botWantToSay()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<String>() {
-                    @Override
-                    public void call(String message) {
-                        sendMessage(message);
-                    }
-                });
+        if (subscription == null) {
+            BotAi botAi = BotAi.create(this);
+            subscription = botAi.botWantToSay()
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Action1<String>() {
+                        @Override
+                        public void call(String message) {
+                            sendMessage(message);
+                        }
+                    });
+        }
 
         // We don't really care about redelivering intent, so use STICKY.
         return START_STICKY;
@@ -42,6 +44,7 @@ public final class BotService extends Service {
         // Actually, this service is not meant to be destroyed, so this is just in case.
         super.onDestroy();
         subscription.unsubscribe();
+        subscription = null;
     }
 
     @Nullable
