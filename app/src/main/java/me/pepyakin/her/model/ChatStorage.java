@@ -58,9 +58,9 @@ final class ChatStorage  {
         return new ChatStorage(db);
     }
 
-    private BriteDatabase db;
+    private final BriteDatabase db;
 
-    ChatStorage(BriteDatabase db) {
+    private ChatStorage(BriteDatabase db) {
         this.db = db;
     }
 

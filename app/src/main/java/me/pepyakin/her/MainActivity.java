@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean locationSent = false;
 
-    ChatView chatView;
+    private ChatView chatView;
 
     public static Intent buildIntent(Context context) {
         return new Intent(context, MainActivity.class);

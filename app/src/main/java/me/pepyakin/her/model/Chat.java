@@ -16,7 +16,7 @@ public final class Chat {
 
     private final ChatStorage chatStorage;
 
-    Chat(final ChatStorage chatStorage) {
+    private Chat(final ChatStorage chatStorage) {
         this.chatStorage = chatStorage;
     }
 

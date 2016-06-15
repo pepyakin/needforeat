@@ -11,7 +11,7 @@ final class BotAi {
     private final ImpulseProvider impulseProvider;
     private final Speech speech;
 
-    BotAi(ImpulseProvider impulseProvider, Speech speech) {
+    private BotAi(ImpulseProvider impulseProvider, Speech speech) {
         this.impulseProvider = impulseProvider;
         this.speech = speech;
     }
