@@ -13,19 +13,18 @@ import java.util.Map;
 
 import me.pepyakin.her.util.Functionals;
 import rx.Observable;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 
 final class PermissionRequester {
 
-    private static final Map<String, Subject<Boolean, Boolean>> subjects = new
-            HashMap<>();
-    final Activity activity;
+    private final Map<String, Subject<Boolean, Boolean>> subjects;
+    private final Activity activity;
 
     PermissionRequester(Activity activity) {
         this.activity = activity;
+        this.subjects = new HashMap<>();
     }
 
     public Observable<Boolean> ensurePermissions(String[] permissions) {
@@ -40,23 +39,31 @@ final class PermissionRequester {
                 .flatMap(new Func1<List<String>, Observable<Boolean>>() {
                     @Override
                     public Observable<Boolean> call(List<String> permissionList) {
-                        List<Observable<Boolean>> allPermissionSubjects
-                                = new ArrayList<>();
-                        for (String permission : permissionList) {
-                            PublishSubject<Boolean> subject = PublishSubject.create();
-                            subjects.put(permission, subject);
-                            allPermissionSubjects.add(subject);
-                        }
-
                         String[] permissions = new String[permissionList.size()];
-                        ActivityCompat.requestPermissions(activity,
-                                permissionList.toArray(permissions), 0);
-
-                        return Observable.merge(allPermissionSubjects)
-                                .take(allPermissionSubjects.size())
-                                .all(Functionals.<Boolean>id());
+                        permissionList.toArray(permissions);
+                        return requestPermissions(permissions);
                     }
                 });
+    }
+
+    @NonNull
+    private Observable<Boolean> requestPermissions(String[] permissions) {
+        if (permissions.length == 0) {
+            // No permissions requested or all already granted.
+            return Observable.just(true);
+        }
+
+        List<Observable<Boolean>> allPermissionSubjects = new ArrayList<>();
+        for (String permission : permissions) {
+            PublishSubject<Boolean> subject = PublishSubject.create();
+            subjects.put(permission, subject);
+            allPermissionSubjects.add(subject);
+        }
+
+        ActivityCompat.requestPermissions(activity, permissions, 0);
+        return Observable.merge(allPermissionSubjects)
+                .take(allPermissionSubjects.size())
+                .all(Functionals.<Boolean>id());
     }
 
     public void onRequestPermissionResult(
