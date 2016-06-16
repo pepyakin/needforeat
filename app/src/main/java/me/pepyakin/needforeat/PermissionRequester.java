@@ -1,16 +1,13 @@
 package me.pepyakin.needforeat;
 
-import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import me.pepyakin.needforeat.PermissionAskAgent.PermissionResponse;
 import me.pepyakin.needforeat.util.Functionals;
 import rx.Observable;
 import rx.functions.Func1;
@@ -20,11 +17,21 @@ import rx.subjects.Subject;
 final class PermissionRequester {
 
     private final Map<String, Subject<Boolean, Boolean>> subjects;
-    private final Activity activity;
+    private final PermissionAskAgent permissionAskAgent;
+    private final PermissionAskAgent.Listener listener;
 
-    PermissionRequester(Activity activity) {
-        this.activity = activity;
+    PermissionRequester(PermissionAskAgent permissionAskAgent) {
+        this.permissionAskAgent = permissionAskAgent;
         this.subjects = new HashMap<>();
+        this.listener = new PermissionAskAgent.Listener() {
+            @Override
+            public void onPermissionResponse(
+                    PermissionResponse[] permissionResponses) {
+                for (PermissionResponse resp : permissionResponses) {
+                    subjects.get(resp.name).onNext(resp.granted);
+                }
+            }
+        };
     }
 
     public Observable<Boolean> ensurePermissions(String[] permissions) {
@@ -32,7 +39,7 @@ final class PermissionRequester {
                 .filter(new Func1<String, Boolean>() {
                     @Override
                     public Boolean call(String permission) {
-                        return !isGranted(permission);
+                        return !permissionAskAgent.isGranted(permission);
                     }
                 })
                 .toList()
@@ -60,24 +67,11 @@ final class PermissionRequester {
             allPermissionSubjects.add(subject);
         }
 
-        ActivityCompat.requestPermissions(activity, permissions, 0);
+        permissionAskAgent.setListener(listener);
+        permissionAskAgent.askPermissions(permissions);
+
         return Observable.merge(allPermissionSubjects)
                 .take(allPermissionSubjects.size())
                 .all(Functionals.<Boolean>id());
-    }
-
-    public void onRequestPermissionResult(
-            @NonNull String[] permissions,
-            @NonNull int[] grantResults
-    ) {
-        for (int i = 0; i < permissions.length; i++) {
-            subjects.get(permissions[i]).onNext(grantResults[i] ==
-                    PackageManager.PERMISSION_GRANTED);
-        }
-    }
-
-    private boolean isGranted(String permission) {
-        return ContextCompat.checkSelfPermission(activity, permission) ==
-                PackageManager.PERMISSION_GRANTED;
     }
 }

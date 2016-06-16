@@ -25,8 +25,11 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
+
     private Chat chat;
     private PermissionRequester permissionRequester;
+    private CompatPermissionAskAgent permissionAskAgent;
 
     private Subscription locationSubscription;
     private Subscription chatSubscription;
@@ -44,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         chat = Chat.getInstance(this);
-        permissionRequester = new PermissionRequester(this);
+        permissionAskAgent = new CompatPermissionAskAgent(this, REQUEST_LOCATION_PERMISSION);
+        permissionRequester = new PermissionRequester(permissionAskAgent);
 
         chatView = new ChatView(this);
         setContentView(chatView);
@@ -142,12 +146,14 @@ public class MainActivity extends AppCompatActivity {
             @NonNull int[] grantResults
     ) {
         Preconditions.check(permissions.length == grantResults.length);
+
         if (permissions.length == 0) {
             // Cancelled.
             return;
         }
 
-        permissionRequester.onRequestPermissionResult(
-                permissions, grantResults);
+        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+            permissionAskAgent.reportResponse(permissions, grantResults);
+        }
     }
 }
