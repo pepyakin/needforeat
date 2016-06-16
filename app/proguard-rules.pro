@@ -15,3 +15,9 @@
 #-keepclassmembers class fqcn.of.javascript.interface.for.webview {
 #   public *;
 #}
+
+
+# Be conservative about RxJava
+# https://github.com/ReactiveX/RxAndroid/pull/220
+-keep class rx.** { *; }
+-dontwarn rx.**
