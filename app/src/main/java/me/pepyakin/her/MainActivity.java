@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestAndEventuallySendLocation() {
         final Observable<GeoPoint> deviceLocationObservable
-                = RxLocationManagerAdapter.singleMostAccurateLocation(this);
+                = RxLocationProviderAdapter.singleMostAccurateLocation(this);
 
         String[] permissions = {ACCESS_FINE_LOCATION};
         locationSubscription = permissionRequester.ensurePermissions(permissions)

@@ -1,6 +1,5 @@
 package me.pepyakin.her;
 
-import android.location.Location;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -8,15 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import me.pepyakin.her.model.GeoPoint;
-import rx.functions.Action1;
 import rx.observers.TestSubscriber;
 
-import static org.junit.Assert.*;
-
-public class RxLocationManagerAdapterTest {
+public class RxLocationProviderAdapterTest {
 
     private static final GeoPoint FIRST_POINT = GeoPoint.fromLatLong(1.0, 1.0);
     private static final GeoPoint SECOND_POINT = GeoPoint.fromLatLong(2.0, 2.0);
@@ -31,7 +26,7 @@ public class RxLocationManagerAdapterTest {
     @Test
     public void simple() throws Exception {
         TestSubscriber<GeoPoint> testSubscriber = new TestSubscriber<>();
-        RxLocationManagerAdapter
+        RxLocationProviderAdapter
                 .singleMostAccurateLocation(mockLocationProvider)
                 .subscribe(testSubscriber);
 
@@ -45,7 +40,7 @@ public class RxLocationManagerAdapterTest {
         mockLocationProvider.notifyLocation(FIRST_POINT);
 
         TestSubscriber<GeoPoint> testSubscriber = new TestSubscriber<>();
-        RxLocationManagerAdapter
+        RxLocationProviderAdapter
                 .singleMostAccurateLocation(mockLocationProvider)
                 .take(1)
                 .subscribe(testSubscriber);
@@ -59,7 +54,7 @@ public class RxLocationManagerAdapterTest {
         mockLocationProvider.notifyLocation(FIRST_POINT);
 
         TestSubscriber<GeoPoint> testSubscriber = new TestSubscriber<>();
-        RxLocationManagerAdapter
+        RxLocationProviderAdapter
                 .singleMostAccurateLocation(mockLocationProvider)
                 .timeout(5, TimeUnit.SECONDS)
                 .subscribe(testSubscriber);

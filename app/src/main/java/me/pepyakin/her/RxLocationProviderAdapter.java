@@ -17,9 +17,9 @@ import rx.functions.Func0;
 import rx.functions.Func1;
 import rx.subscriptions.BooleanSubscription;
 
-final class RxLocationManagerAdapter {
+final class RxLocationProviderAdapter {
 
-    private RxLocationManagerAdapter() {
+    private RxLocationProviderAdapter() {
     }
 
     @NonNull
