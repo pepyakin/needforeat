@@ -17,6 +17,7 @@ import me.pepyakin.her.util.Preconditions;
 import me.pepyakin.her.view.ChatView;
 import rx.Observable;
 import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 
@@ -95,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 })
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<GeoPoint>() {
                     @Override
                     public void call(GeoPoint geoPoint) {

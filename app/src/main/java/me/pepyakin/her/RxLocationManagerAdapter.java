@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import me.pepyakin.her.model.GeoPoint;
 import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action0;
 import rx.functions.Func0;
 import rx.functions.Func1;
@@ -32,7 +33,7 @@ final class RxLocationManagerAdapter {
     @NonNull
     static Observable<GeoPoint> singleMostAccurateLocation(
             LocationProvider locationProvider) {
-        Observable<GeoPoint> onlineLocation =
+        final Observable<GeoPoint> onlineLocation =
                 Observable.create(new LocationOnSubscribe(locationProvider))
                         .publish()
                         .refCount();
@@ -43,7 +44,7 @@ final class RxLocationManagerAdapter {
         return onlineLocation.timeout(new Func0<Observable<Object>>() {
             @Override
             public Observable<Object> call() {
-                return Observable.timer(1, TimeUnit.SECONDS).cast(Object.class);
+                return Observable.timer(2, TimeUnit.SECONDS).cast(Object.class);
             }
         }, new Func1<GeoPoint, Observable<Object>>() {
             @Override
@@ -91,12 +92,6 @@ final class RxLocationManagerAdapter {
                     locationListener.cancel();
                 }
             }));
-
-            try {
-                locationProvider.requestSingleLocation(listener);
-            } catch (SecurityException e) {
-                subscriber.onError(e);
-            }
         }
     }
 }
