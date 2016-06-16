@@ -1,4 +1,4 @@
-package me.pepyakin.her;
+package me.pepyakin.needforeat;
 
 import android.app.Activity;
 import android.support.test.rule.ActivityTestRule;
@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import me.pepyakin.her.model.ChatItem;
-import me.pepyakin.her.view.ChatView;
+import me.pepyakin.needforeat.model.ChatItem;
+import me.pepyakin.needforeat.view.ChatView;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;

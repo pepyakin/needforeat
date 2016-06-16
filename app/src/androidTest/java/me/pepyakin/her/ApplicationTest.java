@@ -1,4 +1,4 @@
-package me.pepyakin.her;
+package me.pepyakin.needforeat;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
