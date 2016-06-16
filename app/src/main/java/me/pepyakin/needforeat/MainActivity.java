@@ -34,7 +34,10 @@ public class MainActivity extends AppCompatActivity {
     private Subscription locationSubscription;
     private Subscription chatSubscription;
 
-    private boolean locationSent = false;
+    // We should not send location if either:
+    // - we already sent location
+    // - user denied access to location
+    private boolean shouldSendLocation = true;
 
     private ChatView chatView;
 
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             startService(new Intent(this, BotService.class));
         } else {
-            locationSent = savedInstanceState.getBoolean("locationSent");
+            shouldSendLocation = savedInstanceState.getBoolean("shouldSendLocation");
         }
 
         chatView.setOnUserSentMessage(new ChatView.OnUserSentMessage() {
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         NotificationController.chatActivityStarted(this);
 
-        if (!locationSent) {
+        if (shouldSendLocation) {
             requestAndEventuallySendLocation();
         }
     }
@@ -89,24 +92,26 @@ public class MainActivity extends AppCompatActivity {
 
         String[] permissions = {ACCESS_FINE_LOCATION};
         locationSubscription = permissionRequester.ensurePermissions(permissions)
+                .observeOn(AndroidSchedulers.mainThread())
                 .flatMap(new Func1<Boolean, Observable<GeoPoint>>() {
                     @Override
                     public Observable<GeoPoint> call(Boolean permissionsGranted) {
                         if (permissionsGranted) {
                             return deviceLocationObservable;
                         } else {
+                            // ! Side effect
+                            shouldSendLocation = false;
                             return Observable.empty();
                         }
                     }
                 })
                 .take(1) // for early unsubscribe, after onNext.
-                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<GeoPoint>() {
                     @Override
                     public void call(GeoPoint geoPoint) {
                         String coordinates = geoPoint.toString();
                         chat.send(coordinates);
-                        locationSent = true;
+                        shouldSendLocation = false;
                     }
                 }, new Action1<Throwable>() {
                     @Override
@@ -129,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("locationSent", locationSent);
+        outState.putBoolean("shouldSendLocation", shouldSendLocation);
     }
 
     @Override
