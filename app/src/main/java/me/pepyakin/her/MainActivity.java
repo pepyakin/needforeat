@@ -91,11 +91,11 @@ public class MainActivity extends AppCompatActivity {
                         if (permissionsGranted) {
                             return deviceLocationObservable;
                         } else {
-                            // TODO: Heuristics?
-                            return Observable.never();
+                            return Observable.empty();
                         }
                     }
                 })
+                .take(1) // for early unsubscribe, after onNext.
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action1<GeoPoint>() {
                     @Override
