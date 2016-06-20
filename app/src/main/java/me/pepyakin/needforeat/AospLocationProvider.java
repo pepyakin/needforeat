@@ -63,6 +63,9 @@ final class AospLocationProvider implements LocationProvider {
         //noinspection MissingPermission
         Location lastKnownLocation = locationManager.getLastKnownLocation
                 (bestProvider);
+        if (lastKnownLocation == null) {
+            return null;
+        }
         return GeoPoint.fromLocation(lastKnownLocation);
     }
 
